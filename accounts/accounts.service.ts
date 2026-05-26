@@ -112,8 +112,15 @@ async function register(params: RegisterParams, origin: string) {
   account.verificationToken = randomTokenString();
   account.passwordHash = bcrypt.hashSync(params.password, 10);
 
+  // === ADD THESE TWO LINES TO BYPASS VERIFICATION ===
+  account.verified = new Date(); 
+  account.verificationToken = null;
+  // =================================================
+
   await account.save();
-  await sendVerificationEmail(account, origin);
+  
+  // Optional: You can comment this out if you want to stop it from trying to send emails entirely
+  await sendVerificationEmail(account, origin); 
 }
 
 async function verifyEmail({ token }: VerifyEmailParams) {
